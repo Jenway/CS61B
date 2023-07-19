@@ -81,8 +81,32 @@ public class IntList {
      */
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+        //DONE:  fill in method
+        /**
+         // 👺 oh,shit, I thought it was that but ...
+        IntList ret = A;
+        while (A != null && B != null) {
+            IntList temp = A.rest;
+            A.rest = B;
+            B = temp;
+            A = A.rest;
+        }
+        return ret;
+         **/
+        if (A == null && B == null) {
+            return null;
+        } else if ( A == null && B != null) {
+            return B;
+        } else if ( A != null && B == null) {
+            return A;
+        }
+
+        IntList ret = A;
+        while (A.rest != null){
+            A = A.rest;
+        }
+        A.rest = B;
+        return ret;
     }
 
     /**
@@ -91,18 +115,36 @@ public class IntList {
      */
     public static IntList catenate(IntList A, IntList B) {
         //TODO:  fill in method
-        return null;
+        /**
+        if (A == null && B == null) {
+            return null;
+        } else if ( A == null && B != null) {
+            return B;
+        } else if ( A != null && B == null) {
+            return A;
+        }else{
+            return new IntList(A.first,dcatenate(B,A.rest));
+        }
+        **/
+        if (A == null && B == null) {
+            return null;
+        } else if ( A == null && B != null) {
+            return B;
+        } else if ( A != null && B == null) {
+            return A;
+        }
+        IntList ret = new IntList(A.first,null);
+        IntList iter_ = ret;
+        A = A.rest;
+        while (A != null) {
+            iter_.rest = new IntList(A.first,null);
+            A = A.rest;
+            iter_ = iter_.rest;
+        }
+        iter_.rest = B;
+        return ret;
+
     }
-
-
-
-
-
-
-
-
-
-
 
 
 
