@@ -9,6 +9,8 @@
 *.log
 *.ctxt
 .mtj.tmp/
+.idea
+out
 *.jar
 *.war
 *.ear
