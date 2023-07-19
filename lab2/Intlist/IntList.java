@@ -93,6 +93,14 @@ public class IntList {
         }
         return ret;
          **/
+        if (A == null && B == null) {
+            return null;
+        } else if ( A == null && B != null) {
+            return B;
+        } else if ( A != null && B == null) {
+            return A;
+        }
+
         IntList ret = A;
         while (A.rest != null){
             A = A.rest;
@@ -118,6 +126,13 @@ public class IntList {
             return new IntList(A.first,dcatenate(B,A.rest));
         }
         **/
+        if (A == null && B == null) {
+            return null;
+        } else if ( A == null && B != null) {
+            return B;
+        } else if ( A != null && B == null) {
+            return A;
+        }
         IntList ret = new IntList(A.first,null);
         IntList iter_ = ret;
         A = A.rest;
