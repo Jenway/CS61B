@@ -38,59 +38,7 @@ public class ArrayDeque<T> {
         nextLast = plusOne(nextLast);
 
     }
-
-//    private void grow() {
-//        //  This code works aiming to behave like below 2 e.g.
-//
-//        //        [6,7,8,1,2,3,4,5] last:2,front:3
-//        //        [6,7,8,n,n,n,n,n,n,n,n,1,2,3,4,5] last:2 front: 11=(3 + length)
-//
-//        //        [1,2,3,4,5,6,7,8] last:7,front:0
-//        //        [n,n,n,n,n,n,n,n,1,2,3,4,5,6,7,8] last: plusOne(7) front: 0 + length
-//        T[] newArray = (T[]) new Object[length * 2];
-//        int iter = plusOne(nextFirst);
-//        while (iter < length) {
-//            newArray[iter + length] = items[iter];
-//            iter++;
-//        }
-//        int lastIter = minusOne(nextLast);
-//        if (lastIter == length) {
-//            nextLast = 0;
-//        } else {
-//            while (lastIter >= 0) {
-//                newArray[lastIter] = items[lastIter];
-//                lastIter--;
-//            }
-//        }
-//        nextFirst += length;
-//        length *= 2;
-//        items = newArray;
-//    }
-//
-//    private void shrink() {
-//
-//        //        [6,7,8,n,n,n,n,n,n,n,n,1,2,3,4,5] last:2 front: 11=(3 + length)
-//        //        [6,7,8,1,2,3,4,5] last:2,front:3
-//
-//        //        [n,n,n,n,n,n,n,n,1,2,3,4,5,6,7,8] last: plusOne(7) front: 0 + length
-//        //        [1,2,3,4,5,6,7,8] last:7,front:0
-//
-//        T[] newArray = (T[]) new Object[length / 2];
-//        int iter = plusOne(nextFirst);
-//        int newArrayIndex = 0;
-//
-//        while (iter != nextLast) {
-//            newArray[newArrayIndex] = items[iter];
-//            iter = plusOne(iter);
-//            newArrayIndex++;
-//        }
-//
-//        nextFirst = 0;
-//        nextLast = newArrayIndex;
-//        length /= 2;
-//        items = newArray;
-//    }
-
+    
     private int minusOne(int index) {
         return Math.floorMod(index - 1, items.length);
     }
@@ -146,7 +94,8 @@ public class ArrayDeque<T> {
         }
         System.out.println();
     }
-    //    Removes and returns the item at the front of the deque. If no such item exists, returns null.
+    //    Removes and returns the item at the front of the deque.
+    //    If no such item exists, returns null.
 
     private T getFirst() {
         return items[plusOne(nextFirst)];
@@ -163,7 +112,8 @@ public class ArrayDeque<T> {
         size--;
         return ret;
     }
-    //    Removes and returns the item at the back of the deque. If no such item exists, returns null.
+    //    Removes and returns the item at the back of the deque.
+    //    If no such item exists, returns null.
 
     private T getLast() {
         return items[minusOne(nextLast)];

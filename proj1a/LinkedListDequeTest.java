@@ -4,8 +4,6 @@
 
 import org.junit.Test;
 
-import java.util.Optional;
-
 import static org.junit.Assert.*;
 
 public class LinkedListDequeTest {
@@ -56,7 +54,8 @@ public class LinkedListDequeTest {
         System.out.println("Running add/isEmpty/Size test.");
         System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
 
-        LinkedListDeque<String> lld1 = new LinkedListDeque<>();
+        LinkedListDeque<String> lld1 =
+                new LinkedListDeque<>();
 
         boolean passed = checkEmpty(true, lld1.isEmpty());
 
@@ -86,7 +85,8 @@ public class LinkedListDequeTest {
 
         System.out.println("Running add/remove test.");
 
-        System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
+        System.out.println("Make sure to uncomment the " +
+                "lines below (and delete this print statement).");
 
         LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
         // should be empty
@@ -108,4 +108,4 @@ public class LinkedListDequeTest {
         addIsEmptySizeTest();
         addRemoveTest();
     }
-} 
+}
