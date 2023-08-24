@@ -3,6 +3,7 @@ import org.junit.Test;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
+
 public class ArrayDequeTest {
     @Test
     public void testaddsizeempty() {
@@ -16,10 +17,10 @@ public class ArrayDequeTest {
         assertEquals(2, dq.size());
 
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
 
         String first = dq.removeFirst();
-        dq.printRawDeque();
+//        dq.printRawDeque();
 
         assertEquals("first", first);
 
@@ -43,14 +44,15 @@ public class ArrayDequeTest {
         }
         for (int i = 0; i < 30; i++) {
             dq.printDeque();
-            dq.printRawDeque();
+//            dq.printRawDeque();
             dq.removeFirst();
         }
         assertEquals(2, dq.size());
         dq.printDeque();
     }
+
     @Test
-    public void  slideTest() {
+    public void slideTest() {
         ArrayDeque<String> dq = new ArrayDeque<>();
         dq.addLast("a");
         dq.addLast("b");
@@ -58,23 +60,23 @@ public class ArrayDequeTest {
         dq.addLast("d");
         dq.addLast("e");
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
         dq.addFirst("f");
         dq.addLast("g");
         dq.addLast("h");
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
         dq.addLast("Z");
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
         dq.removeLast();
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
 
     }
 
     @Test
-    public void oneTwoThreeTest(){
+    public void oneTwoThreeTest() {
 //        [1,2,3,4,5,6,7,8]
         ArrayDeque<Integer> dq = new ArrayDeque<>();
         dq.addLast(6);
@@ -86,10 +88,25 @@ public class ArrayDequeTest {
         dq.addLast(2);
         dq.addLast(3);
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
         dq.addLast(9);
         dq.addFirst(7);
         dq.printDeque();
-        dq.printRawDeque();
+//        dq.printRawDeque();
+    }
+
+    @Test
+    public void d003Test() {
+        /* d003) AD-basic: Random addFirst/removeLast/isEmpty tests. */
+        ArrayDeque<Integer> ad0 = new ArrayDeque<>();
+        ad0.addFirst(0);
+        ad0.addFirst(1);
+        int temp = ad0.removeLast();
+        System.out.println(temp);
+        int temp2 = ad0.removeLast();
+        System.out.println(temp2);
+        ad0.addFirst(4);
+
+
     }
 }
