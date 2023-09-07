@@ -8,11 +8,11 @@ A:
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: the way I implemented the resize method. I used the modular arithmetic to make the code more concise and elegant.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: a helper method
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
