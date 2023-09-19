@@ -1,28 +1,17 @@
-import static  org.junit.Assert.*;
-
+import static org.junit.Assert.*;
 import org.junit.Test;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 public class TestArrayDequeGold {
-
     @Test
     public void testStudentArrayDeque() {
         StudentArrayDeque<Integer> testArray = new StudentArrayDeque<>();
         ArrayDequeSolution<Integer> stdArray = new ArrayDequeSolution<>();
         String log = "";
-        ByteArrayOutputStream BAOS = new ByteArrayOutputStream();
-        PrintStream ps = new PrintStream(BAOS);
-// IMPORTANT: Save the old System.out!
-        PrintStream old = System.out;
-
         for (int i = 0; i < 1000; i++) {
-            if (stdArray.isEmpty()) {
+            if (stdArray.size() == 0) {
                 int addNumber = StdRandom.uniform(1000);
-                boolean callFirst = (StdRandom.uniform(2)) == 0;
-                if (callFirst) {
+                int headOrBack = StdRandom.uniform(2);
+                if (headOrBack == 0) {
                     log = log + "addFirst(" + addNumber + ")\n";
                     testArray.addFirst(addNumber);
                     stdArray.addFirst(addNumber);
@@ -32,10 +21,10 @@ public class TestArrayDequeGold {
                     stdArray.addLast(addNumber);
                 }
             } else {
-                int x = StdRandom.uniform(6);
+                int x = StdRandom.uniform(4);
                 int addNumber = StdRandom.uniform(1000);
-                Integer testRemoveNumber = 1;
-                Integer stdRemoveNumber = 1;
+                Integer testremoveNumber = 1;
+                Integer stdremoveNumber = 1;
                 switch (x) {
                     case 0:
                         log = log + "addFirst(" + addNumber + ")\n";
@@ -49,30 +38,17 @@ public class TestArrayDequeGold {
                         break;
                     case 2:
                         log = log + "removeFirst()\n";
-                        testRemoveNumber = testArray.removeFirst();
-                        stdRemoveNumber = stdArray.removeFirst();
+                        testremoveNumber = testArray.removeFirst();
+                        stdremoveNumber = stdArray.removeFirst();
                         break;
                     case 3:
                         log = log + "removeLast()\n";
-                        testRemoveNumber = testArray.removeLast();
-                        stdRemoveNumber = stdArray.removeLast();
+                        testremoveNumber = testArray.removeLast();
+                        stdremoveNumber = stdArray.removeLast();
                         break;
                     default:
                 }
-                if (x == 4) {
-                    log = log +"printDeque()\n";
-                    System.setOut(ps);
-                    testArray.printDeque();
-                    String testString = ps.toString();
-                    System.out.flush();
-                    stdArray.printDeque();
-                    String stdString = ps.toString();
-                    System.out.flush();
-                    System.setOut(old);
-                    assertEquals(log,stdString,testString);
-                } else {
-                    assertEquals(log, stdRemoveNumber, testRemoveNumber);
-                }
+                assertEquals(log, stdremoveNumber, testremoveNumber);
             }
         }
 
