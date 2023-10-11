@@ -3,7 +3,7 @@ package synthesizer;
 
 import java.util.Iterator;
 
-//TODO: Make sure to make this class and all of its methods public
+//DONE: Make sure to make this class and all of its methods public
 //DONE: Make sure to make this class extend AbstractBoundedQueue<t>
 public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     /* Index for the next dequeue or peek. */
@@ -36,7 +36,7 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
      */
     @Override
     public void enqueue(T x) {
-        // TODO: Enqueue the item. Don't forget to increase fillCount and update last.
+        // DONE: Enqueue the item. Don't forget to increase fillCount and update last.
         if (isFull()) {
             this.capacity *= 2;
             T[] newrb = (T[]) new Object[capacity];
@@ -78,7 +78,7 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
         return rb[first];
     }
 
-    // TODO: When you get to part 5, implement the needed code to support iteration.
+    // DONE: When you get to part 5, implement the needed code to support iteration.
     @Override
     public Iterator<T> iterator() {
         return new BufferIterator();
