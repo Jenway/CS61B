@@ -89,7 +89,12 @@ public class Percolation {
         if (!isOpen(row, col)) {
             return false;
         }
-        return this.sites.connected(_topSite, xyTo1D(row, col));
+        int index =  xyTo1D(row, col);
+        if (index >= this._topSite){
+            return false;
+        } else {
+            return this.sites.connected(_topSite,index);
+        }
     }
 
     public int numberOfOpenSites() {
