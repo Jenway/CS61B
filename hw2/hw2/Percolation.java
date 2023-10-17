@@ -56,7 +56,7 @@ public class Percolation {
     }
 
     private void unionIfOpen(int row, int col, int newRow, int newCol) {
-        if (newRow >= 0 && newRow < N && newCol >= 0 && newCol < N) {
+        if (newRow >= 0 && newRow < N && newCol >= 0 && newCol < N && flagOpen[newRow][newCol]) {
             // Do Not change the line above into " if(!is_open)"
             this.sites.union(xyTo1D(row, col), xyTo1D(newRow, newCol));
         }
