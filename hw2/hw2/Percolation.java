@@ -90,10 +90,10 @@ public class Percolation {
             return false;
         }
         int index =  xyTo1D(row, col);
-        if (index >= this._topSite){
+        if (index >= this._topSite) {
             return false;
         } else {
-            return this.sites.connected(_topSite,index);
+            return this.sites.connected(_topSite, index);
         }
     }
 
