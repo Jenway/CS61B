@@ -6,6 +6,8 @@ public class Percolation {
     private final int N;
     private final WeightedQuickUnionUF sites;
 
+    private WeightedQuickUnionUF sites2;
+
     private final int _topSite;
 
     private final int _bottomSite;
@@ -28,7 +30,16 @@ public class Percolation {
 
         for (int i = 0; i < N; i++) {
             sites.union(_topSite, xyTo1D(0, i));
+        }
+
+        for (int i = 0; i < N; i++) {
             sites.union(_bottomSite, xyTo1D(N - 1, i));
+        }
+
+        this.sites2 = new WeightedQuickUnionUF(N * N + 1);
+
+        for (int i = 0; i < N; i++) {
+            sites2.union(_topSite, xyTo1D(0, i));
         }
 
         this.flagOpen = new boolean[N][N];
@@ -59,6 +70,7 @@ public class Percolation {
         if (newRow >= 0 && newRow < N && newCol >= 0 && newCol < N && flagOpen[newRow][newCol]) {
             // Do Not change the line above into " if(!is_open)"
             this.sites.union(xyTo1D(row, col), xyTo1D(newRow, newCol));
+            this.sites2.union(xyTo1D(row, col), xyTo1D(newRow, newCol));
         }
     }
 
@@ -89,12 +101,7 @@ public class Percolation {
         if (!isOpen(row, col)) {
             return false;
         }
-        int index =  xyTo1D(row, col);
-        if (index >= this._topSite) {
-            return false;
-        } else {
-            return this.sites.connected(_topSite, index);
-        }
+        return this.sites2.connected(xyTo1D(row, col), _topSite);
     }
 
     public int numberOfOpenSites() {
