@@ -63,6 +63,8 @@ My solutions for [CS 61B Data Structures, Spring 2018](https://sp18.datastructur
     Warning: Not suitable for children under the age of 4.
 
 - ### Project 1B : Applying and Testing Data Structures
+    
+    ASAG: Unfiltered. Uncensored.
 
 - ### Project 1 Gold : Randomized Testing
 
