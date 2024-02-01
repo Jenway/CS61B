@@ -18,6 +18,8 @@ My solutions for [CS 61B Data Structures, Spring 2018](https://sp18.datastructur
 
 - ### HW 4: Puzzle Solver
 
+    ASAG: I like your outfit today!
+
 - ### HW 5: Seam Carving
 
 - ### HW 6 : Boggle
