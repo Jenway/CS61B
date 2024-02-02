@@ -45,8 +45,12 @@ My solutions for [CS 61B Data Structures, Spring 2018](https://sp18.datastructur
     ASAG: A Quiet Voice Of Reason In A Noisy World
 
 - ### Lab 10 : Priority Queues and Heaps
+    
+    ASAG: Collect all fifty billion!
 
 - ### Lab 11 : Graphs
+
+    On the other hand, you have different fingers.
 
 - ### Lab 12 : Merge and Quick Sorts
 

@@ -34,8 +34,13 @@ public class MergeSort {
     /** Returns a queue of queues that each contain one item from items. */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
-        // Your code here!
-        return null;
+        Queue<Queue<Item>> result = new Queue<>();
+        for (Item item : items) {
+            Queue<Item> singleItemQueue = new Queue<>();
+            singleItemQueue.enqueue(item);
+            result.enqueue(singleItemQueue);
+        }
+        return result;
     }
 
     /**
@@ -53,14 +58,42 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+        Queue<Item> result = new Queue<>();
+
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            Queue<Item> currentQueue = (q1.isEmpty())
+                    ? q2
+                    : (q2.isEmpty())
+                    ? q1
+                    : (q1.peek().compareTo(q2.peek()) <= 0)
+                    ? q1
+                    : q2;
+            result.enqueue(currentQueue.peek());
+            currentQueue.dequeue();
+        }
+
+        return result;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        if (items.size() <= 1) {
+            // Already sorted or empty, no need to sort
+            return items;
+        }
+
+        // Create a queue of queues, each containing a single item
+        Queue<Queue<Item>> queues = makeSingleItemQueues(items);
+
+        // Merge the queues until only one queue remains
+        while (queues.size() > 1) {
+            Queue<Item> q1 = queues.dequeue();
+            Queue<Item> q2 = queues.dequeue();
+            queues.enqueue(mergeSortedQueues(q1, q2));
+        }
+
+        // The final queue is the sorted result
+        return queues.dequeue();
     }
 }
