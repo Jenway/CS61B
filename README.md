@@ -54,6 +54,8 @@ My solutions for [CS 61B Data Structures, Spring 2018](https://sp18.datastructur
 
 - ### Lab 12 : Merge and Quick Sorts
 
+    The autograder tests your code, but who tests the autograder?
+
 - ### Lab 13 : Radix Sorts
 
 - ### Lab 14 : Fractal Sound

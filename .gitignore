@@ -5,6 +5,7 @@
 !**.json
 !.expelimicate
 !.gitignore
+!/Vitamin/*
 .class
 *.log
 *.ctxt
