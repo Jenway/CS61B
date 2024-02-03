@@ -1,7 +1,16 @@
-import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.ArrayList;
+
 
 /**
  * This class provides a shortestPath method for finding routes between two points
@@ -25,7 +34,63 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        return null; // FIXME
+        long stNode = g.closest(stlon, stlat);
+        long destNode = g.closest(destlon, destlat);
+        Map<Long, Long> edgeTo = new HashMap<>();
+        Set<Long> isVisited = new HashSet<>();
+
+        PriorityQueue<Long> pq = new PriorityQueue<>(g.getNodeComparator());
+        for (long node : g.vertices()) {
+            g.changeDistTo(node, Double.POSITIVE_INFINITY);
+        }
+        g.changeDistTo(stNode, 0);
+        pq.add(stNode);
+
+        while (!pq.isEmpty()) {
+            long v = pq.poll();
+            if (isVisited.contains(v)) {
+                continue;
+            }
+            if (v == destNode) {
+                break;
+            }
+            isVisited.add(v);
+            for (long w : g.adjacent(v)) {
+                relax(g, edgeTo, pq, v, w, destNode);
+            }
+        }
+
+        List<Long> res = new LinkedList<>();
+        res.add(destNode);
+        while (destNode != stNode) {
+            // cannot reach destNode
+            if (edgeTo.get(destNode) == null) {
+                return new LinkedList<>();
+            }
+            res.add(0, edgeTo.get(destNode));
+            destNode = edgeTo.get(destNode);
+        }
+
+        // clean
+        for (Long node : g.vertices()) {
+            g.changePriority(node, 0);
+        }
+
+        return res;
+    }
+
+    private static void relax(GraphDB g, Map<Long, Long> edgeTo, PriorityQueue<Long> pq, long v,
+                              long w, long destNode) {
+        // dijkstra
+        if (g.getDistTo(v) + g.distance(v, w) < g.getDistTo(w)) {
+            g.changeDistTo(w, g.getDistTo(v) + g.distance(v, w));
+
+            // A* search
+            g.changePriority(w, g.getDistTo(w) + g.distance(w, destNode));
+            pq.add(w);
+
+            edgeTo.put(w, v);
+        }
     }
 
     /**
@@ -37,7 +102,82 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        return null; // FIXME
+        List<NavigationDirection> res = new ArrayList<>();
+
+        NavigationDirection cur = new NavigationDirection();
+        cur.direction = NavigationDirection.START;
+        cur.way = getWayName(g, route.get(0), route.get(1));
+        cur.distance += g.distance(route.get(0), route.get(1));
+
+        for (int i = 1, j = 2; j < route.size(); i++, j++) {
+            if (!getWayName(g, route.get(i), route.get(j)).equals(cur.way)) {
+                res.add(cur);
+                cur = new NavigationDirection();
+                cur.way = getWayName(g, route.get(i), route.get(j));
+
+                double prevBearing = g.bearing(route.get(i - 1), route.get(i));
+                double curBearing = g.bearing(route.get(i), route.get(j));
+                cur.direction = convertBearingToDirection(prevBearing, curBearing);
+
+                cur.distance += g.distance(route.get(i), route.get(j));
+                continue;
+            }
+            cur.distance += g.distance(route.get(i), route.get(j));
+        }
+        res.add(cur);
+        return res;
+    }
+
+    /**
+     * decide relative bearing according to previous bearing and current bearing.
+     */
+    private static int convertBearingToDirection(double prevBearing, double curBearing) {
+        double relativeBearing = curBearing - prevBearing;
+        if (relativeBearing > 180) {
+            relativeBearing -= 360;
+        } else if (relativeBearing < -180) {
+            relativeBearing += 360;
+        }
+
+        if (relativeBearing < -100) {
+            return NavigationDirection.SHARP_LEFT;
+        } else if (relativeBearing < -30) {
+            return NavigationDirection.LEFT;
+        } else if (relativeBearing < -15) {
+            return NavigationDirection.SLIGHT_LEFT;
+        } else if (relativeBearing < 15) {
+            return NavigationDirection.STRAIGHT;
+        } else if (relativeBearing < 30) {
+            return NavigationDirection.SLIGHT_RIGHT;
+        } else if (relativeBearing < 100) {
+            return NavigationDirection.RIGHT;
+        } else {
+            return NavigationDirection.SHARP_RIGHT;
+        }
+    }
+
+    /**
+     * two node can and only can decide a way, if this way has no name, return black String.
+     */
+    private static String getWayName(GraphDB g, long node1, long node2) {
+        String noName = "";
+
+        List<Long> ways1 = g.getWays(node1);
+        List<Long> ways2 = g.getWays(node2);
+
+        // intersection
+        List<Long> intersection =
+                ways1.stream().filter(ways2::contains).collect(Collectors.toList());
+
+        if (!intersection.isEmpty()) {
+            if (g.getWayName(intersection.get(0)) == null) {
+                return noName;
+            } else {
+                return g.getWayName(intersection.get(0));
+            }
+        }
+
+        return noName;
     }
 
 

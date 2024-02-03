@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * This class provides all code necessary to take a query box and produce
@@ -9,8 +10,25 @@ import java.util.Map;
  */
 public class Rasterer {
 
+
+    private static final double ROOT_LRLON = MapServer.ROOT_LRLON,
+            ROOT_ULLON = MapServer.ROOT_ULLON,
+            ROOT_LRLAT = MapServer.ROOT_LRLAT,
+            ROOT_ULLAT = MapServer.ROOT_ULLAT;
+    public static final int TILE_SIZE = MapServer.TILE_SIZE;
+    private static final double[] DEPTH_LON_DPP = IntStream.range(0, 8)
+            .mapToDouble(i -> ((ROOT_LRLON - ROOT_ULLON) / TILE_SIZE) / Math.pow(2, i))
+            .toArray();
+
+//    private static final double[] depthLonDPP = new double[8];
+//    static {
+//        depthLonDPP[0] = (ROOT_LRLON - ROOT_ULLON) / MapServer.TILE_SIZE;
+//        for (int i = 1; i < 8; i++) {
+//            depthLonDPP[i] = depthLonDPP[i - 1] / 2;
+//        }
+//    }
     public Rasterer() {
-        // YOUR CODE HERE
+
     }
 
     /**
@@ -42,10 +60,82 @@ public class Rasterer {
      *                    forget to set this to true on success! <br>
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
-        // System.out.println(params);
+        double upperLeftLongitude = params.get("ullon");
+        double lowerRightLongitude = params.get("lrlon");
+        double upperLeftLatitude = params.get("ullat");
+        double lowerRightLatitude = params.get("lrlat");
+        if (upperLeftLongitude > ROOT_LRLON || lowerRightLongitude < ROOT_ULLON
+                || upperLeftLatitude < ROOT_LRLAT || lowerRightLatitude > ROOT_ULLAT
+                || upperLeftLongitude > lowerRightLongitude
+                || upperLeftLatitude < lowerRightLatitude) {
+            Map<String, Object> results = new HashMap<>();
+            results.put("query_success", false);
+            return results;
+        }
+        double requestedLonDPP = (lowerRightLongitude - upperLeftLongitude) / params.get("w");
+        int depth = 0;
+        while (requestedLonDPP < DEPTH_LON_DPP[depth]) {
+            depth++;
+            if (depth == DEPTH_LON_DPP.length - 1) {
+                break;
+            }
+        }
+
+
+        int xStart = 0, xEnd = 0, yStart = 0, yEnd = 0;
+        double maxLevel = Math.pow(2, depth);
+        double lonPerTile = (ROOT_LRLON - ROOT_ULLON) / maxLevel;
+        double latPerTile = (ROOT_LRLAT - ROOT_ULLAT) / maxLevel;
+
+        for (double x = ROOT_ULLON; x <= ROOT_LRLON; x += lonPerTile) {
+            if (x <= upperLeftLongitude) {
+                xStart++;
+            }
+            if (x < lowerRightLongitude) {
+                xEnd++;
+            }
+        }
+
+        for (double y = ROOT_ULLAT; y >= ROOT_LRLAT; y += latPerTile) {
+            if (y >= upperLeftLatitude) {
+                yStart++;
+            }
+            if (y > lowerRightLatitude) {
+                yEnd++;
+            }
+        }
+
+        if (xStart != 0) {
+            xStart--;
+        }
+        if (yStart != 0) {
+            yStart--;
+        }
+        if (xEnd != 0) {
+            xEnd--;
+        }
+        if (yEnd != 0) {
+            yEnd--;
+        }
+
+
+        String[][] renderGrid = new String[yEnd - yStart + 1][xEnd - xStart + 1];
+        for (int i = 0; i < renderGrid.length; i++) {
+            for (int j = 0; j < renderGrid[0].length; j++) {
+                renderGrid[i][j] = "d" + depth + "_x" + (j + xStart) + "_y" + (i + yStart) + ".png";
+            }
+        }
+
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
-                           + "your browser.");
+
+        results.put("render_grid", renderGrid);
+        results.put("raster_ul_lon", ROOT_ULLON + xStart * lonPerTile);
+        results.put("raster_ul_lat", ROOT_ULLAT + yStart * latPerTile);
+        results.put("raster_lr_lon", ROOT_ULLON + (xEnd + 1) * lonPerTile);
+        results.put("raster_lr_lat", ROOT_ULLAT + (yEnd + 1) * latPerTile);
+        results.put("depth", depth);
+        results.put("query_success", true);
+
         return results;
     }
 

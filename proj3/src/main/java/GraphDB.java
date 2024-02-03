@@ -3,10 +3,16 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
+import java.util.Comparator;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -18,8 +24,12 @@ import java.util.ArrayList;
  * @author Alan Yao, Josh Hug
  */
 public class GraphDB {
-    /** Your instance variables for storing the graph. You should consider
-     * creating helper classes, e.g. Node, Edge, etc. */
+    /* Your instance variables for storing the graph. You should consider
+      creating helper classes, e.g. Node, Edge, etc. */
+
+    private final Map<Long, Node> nodes = new HashMap<>();
+    private final Map<Long, Way> ways = new HashMap<>();
+    private final Map<String, NameNode> nameNodes = new HashMap<>();
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -57,7 +67,7 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        nodes.keySet().removeIf(node -> nodes.get(node).adjs.isEmpty());
     }
 
     /**
@@ -65,8 +75,7 @@ public class GraphDB {
      * @return An iterable of id's of all vertices in the graph.
      */
     Iterable<Long> vertices() {
-        //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return nodes.keySet();
     }
 
     /**
@@ -75,7 +84,7 @@ public class GraphDB {
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return null;
+        return nodes.get(v).adjs;
     }
 
     /**
@@ -136,7 +145,16 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double lon, double lat) {
-        return 0;
+        long closest = 0;
+        double minDistance = Double.MAX_VALUE;
+        for (long v : vertices()) {
+            double distance = distance(lon(v), lat(v), lon, lat);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closest = v;
+            }
+        }
+        return closest;
     }
 
     /**
@@ -145,7 +163,7 @@ public class GraphDB {
      * @return The longitude of the vertex.
      */
     double lon(long v) {
-        return 0;
+        return nodes.get(v).lon;
     }
 
     /**
@@ -154,6 +172,111 @@ public class GraphDB {
      * @return The latitude of the vertex.
      */
     double lat(long v) {
-        return 0;
+        return nodes.get(v).lat;
+    }
+
+    public void addAdj(Long lastNode, Long node) {
+        nodes.get(lastNode).adjs.add(node);
+    }
+
+    public void changePriority(long v, double newPriority) {
+        nodes.get(v).priority = newPriority;
+    }
+
+    public void changeDistTo(long v, double newDistTo) {
+        nodes.get(v).distTo = newDistTo;
+    }
+
+    public double getDistTo(long v) {
+        return nodes.get(v).distTo;
+    }
+
+    public List<Long> getWays(long nodeId) {
+        return nodes.get(nodeId).wayIds;
+    }
+
+    public String getWayName(Long wayId) {
+        return ways.get(wayId).name;
+    }
+
+    public class NodeComparator implements Comparator<Long> {
+        @Override
+        public int compare(Long v, Long w) {
+            return Double.compare(nodes.get(v).priority, nodes.get(w).priority);
+        }
+    }
+
+    public NodeComparator getNodeComparator() {
+        return new NodeComparator();
+    }
+
+    public  static class Node {
+        final long id;
+        final double lon;
+        final double lat;
+
+        double distTo;
+
+        double priority;
+
+        ArrayList<Long> wayIds = new ArrayList<>();
+        Set<Long> adjs = new HashSet<>();
+        public Node(long id, double lon, double lat) {
+            this.id = id;
+            this.lon = lon;
+            this.lat = lat;
+        }
+    }
+
+    /**
+     * Add a node to the graph.
+     * @param n The node to add.
+     */
+    public void addNode(Node n) {
+        nodes.put(n.id, n);
+    }
+
+    public Node getNode(long id) {
+        return nodes.get(id);
+    }
+
+    public static class Way {
+        final long id;
+        final ArrayList<Long> nodes;
+        String maxSpeed;
+        String highway;
+        ArrayList<Long> locations;
+        String name;
+
+        public Way(long id) {
+            this.id = id;
+            this.nodes = new ArrayList<>();
+            this.maxSpeed = "";
+            this.highway = "";
+            this.locations = new ArrayList<>();
+            this.name = "";
+        }
+    }
+    public void addWay(Way w) {
+        ways.put(w.id, w);
+    }
+
+    public static class NameNode {
+        long id;
+        double lon;
+        double lat;
+        String name;
+
+        public NameNode(long id, double lon, double lat, String name) {
+            this.id = id;
+            this.lon = lon;
+            this.lat = lat;
+            this.name = name;
+        }
+
+
+    }
+    public void addNameNode(NameNode nameNode) {
+        nameNodes.put(nameNode.name, nameNode);
     }
 }
