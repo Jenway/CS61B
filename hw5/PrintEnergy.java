@@ -15,6 +15,8 @@ import edu.princeton.cs.algs4.StdOut;
 public class PrintEnergy {
 
     public static void main(String[] args) {
+        args = new String[] {"images/1x1.png","1","h"};
+        args = new String[] {"images/6x5.png","30","h"};
         Picture picture = new Picture(args[0]);
         StdOut.printf("%d-by-%d image\n", picture.width(), picture.height());
         

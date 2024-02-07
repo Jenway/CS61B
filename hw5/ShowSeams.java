@@ -30,6 +30,11 @@ public class ShowSeams {
     }
 
     public static void main(String[] args) {
+//        args = new String[]{"images/HJoceanSmall.png 50 y"};
+        args = new String[]{"images/HJoceanSmall.png", "50", "y"};
+        args = new String[] {"images/6x5.png","30","h"};
+        args = new String[] {"images/1x1.png","1","h"};
+
         Picture picture = new Picture(args[0]);
         StdOut.printf("%d-by-%d image\n", picture.width(), picture.height());
         picture.show();        
