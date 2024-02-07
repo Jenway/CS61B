@@ -72,6 +72,7 @@ public class Rasterer {
             results.put("query_success", false);
             return results;
         }
+        // LonDPP= (lowerRightLongitude − upperLeftLongitude) /  width
         double requestedLonDPP = (lowerRightLongitude - upperLeftLongitude) / params.get("w");
         int depth = 0;
         while (requestedLonDPP < DEPTH_LON_DPP[depth]) {
@@ -80,8 +81,6 @@ public class Rasterer {
                 break;
             }
         }
-
-
         int xStart = 0, xEnd = 0, yStart = 0, yEnd = 0;
         double maxLevel = Math.pow(2, depth);
         double lonPerTile = (ROOT_LRLON - ROOT_ULLON) / maxLevel;

@@ -3,16 +3,10 @@ import org.xml.sax.SAXException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.List;
-import java.util.Comparator;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -30,6 +24,9 @@ public class GraphDB {
     private final Map<Long, Node> nodes = new HashMap<>();
     private final Map<Long, Way> ways = new HashMap<>();
     private final Map<String, NameNode> nameNodes = new HashMap<>();
+    private final Map<String, List<Long>> locations = new LinkedHashMap<>();
+
+    private final Trie trieForNodeName = new Trie();
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -179,6 +176,10 @@ public class GraphDB {
         nodes.get(lastNode).adjs.add(node);
     }
 
+    public void addCleanNameToTrie(String cleanName, String name) {
+        trieForNodeName.add(cleanName, name);
+    }
+
     public void changePriority(long v, double newPriority) {
         nodes.get(v).priority = newPriority;
     }
@@ -197,6 +198,49 @@ public class GraphDB {
 
     public String getWayName(Long wayId) {
         return ways.get(wayId).name;
+    }
+
+    public List<String> getLocationsByPrefix(String prefix) {
+        Trie.TrieNode prefixEnd = trieForNodeName.findNode(prefix);
+        List<String> res = new ArrayList<>();
+        if (prefixEnd == null) {
+            return res;
+        }
+        if (prefixEnd.isWord()) {
+            res.addAll(prefixEnd.getNames());
+        }
+        for (char c : prefixEnd.getChildren().keySet()) {
+            colHelper(prefix + c, res, prefixEnd.getChildren().get(c));
+        }
+        return res;
+    }
+
+    private void colHelper(String s, List<String> res, Trie.TrieNode node) {
+        if (node.isWord()) {
+            res.addAll(node.getNames());
+        }
+        for (char c : node.getChildren().keySet()) {
+            colHelper(s + c, res, node.getChildren().get(c));
+        }
+    }
+
+    public List<Map<String, Object>> getLocations(String locationName) {
+        List<Map<String, Object>> res = new LinkedList<>();
+        if (!locations.containsKey(locationName)) {
+            return res;
+        }
+        for (long id : locations.get(locationName)) {
+            res.add(getNameNodeAsMap(id));
+        }
+        return res;
+    }
+
+    public void addLocation(String name, long id) {
+        if (locations.containsKey(name)) {
+            locations.get(name).add(id);
+        } else {
+            locations.put(name, new ArrayList<>(Collections.singletonList(id)));
+        }
     }
 
     public class NodeComparator implements Comparator<Long> {
@@ -278,5 +322,14 @@ public class GraphDB {
     }
     public void addNameNode(NameNode nameNode) {
         nameNodes.put(nameNode.name, nameNode);
+    }
+    public Map<String, Object> getNameNodeAsMap(long id) {
+        NameNode n = nameNodes.get(id);
+        Map<String, Object> res = new HashMap<>();
+        res.put("id", n.id);
+        res.put("lat", n.lat);
+        res.put("lon", n.lon);
+        res.put("name", n.name);
+        return res;
     }
 }

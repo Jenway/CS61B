@@ -132,10 +132,12 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* While looking at a node, we found a <tag...> with k="name". */
             String name = attributes.getValue("v");
             String cleanName = GraphDB.cleanString(name);
-
+            g.addCleanNameToTrie(cleanName, name);
             GraphDB.NameNode nameNode =
                     new GraphDB.NameNode(lastNode.id, lastNode.lon, lastNode.lat, name);
             g.addNameNode(nameNode);
+            g.addLocation(name, lastNode.id);
+            g.addLocation(cleanName, lastNode.id);
 
             /* Hint: Since we found this <tag...> INSIDE a node, we should probably remember which
             node this tag belongs to. Remember XML is parsed top-to-bottom, so probably it's the
